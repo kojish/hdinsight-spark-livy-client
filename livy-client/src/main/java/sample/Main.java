@@ -20,7 +20,7 @@ public class Main {
 	// Example input for an interactive session.
 	// val sqlContext = new org.apache.spark.sql.SQLContext(sc); val pf = sqlContext.read.parquet("wasb:///parquet/data*")
 	// pf.registerTempTable("pftbl")
-    // pf.count()
+	// pf.count()
 	// sqlContext.sql("SELECT para1, param2, param3 FROM pftbl").show(10)
 	public static void main(String args[]) throws Exception {
 		
