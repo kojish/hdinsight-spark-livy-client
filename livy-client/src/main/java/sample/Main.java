@@ -20,10 +20,9 @@ public class Main {
 
 	// When you create an interactive session using InteractiveSample class,
 	// it will try to create the session that takes about 15 - 30 sec.
-	// Once the session creation is completed, it is ready for taking your
-	// input from the console.
+	// Once the session creation is completed, it is ready for taking your input from stdin.
 	//
-	// For example,you can put the following:
+	// For example, you can put the following:
 	// >val sqlContext = new org.apache.spark.sql.SQLContext(sc); val pf = sqlContext.read.parquet("wasb:///example/data/people.parquet"); pf.registerTempTable("pftbl"); sqlContext.sql("SELECT * FROM pftbl").show()
 	//
 	// Then, the query result will be returned as below:
