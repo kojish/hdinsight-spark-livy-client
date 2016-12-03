@@ -35,7 +35,7 @@ public class Main {
 	// +---+-----+
 	// 
 	public static void main(String args[]) throws Exception {
-		InteractiveSample1 client = new InteractiveSample1();
+		InteractiveSample2 client = new InteractiveSample2();
 		//BatchSample client = new BatchSample();
 		client.run();
    }

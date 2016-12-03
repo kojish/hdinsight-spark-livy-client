@@ -96,7 +96,9 @@ public class LivyInteractiveClient {
 		String data = conf.getConf();
         DataOutputStream os = null;
         BufferedReader br = null;
-
+System.out.println("#######");
+System.out.println(data);
+System.out.println("#######");
         HttpURLConnection con = (HttpURLConnection)new URL(baseUri +  "/sessions").openConnection();  
         Authenticator.setDefault(auth);
         con.setRequestMethod("POST");

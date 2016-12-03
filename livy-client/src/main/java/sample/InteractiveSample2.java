@@ -27,12 +27,12 @@ public class InteractiveSample2 {
 	private int session_status = Session.STARTING;
 	private LivyInteractiveClient client = null;
 	private final String AZUREHDINSIGHT_LIVY_URI = ".azurehdinsight.net/livy";
-	private String endpoint = "your-endpoint-name";
+	private String endpoint = "kojish";
 	
 	public InteractiveSample2() {
 		String baseUri = "https://" + endpoint + AZUREHDINSIGHT_LIVY_URI;
 		try {
-			client = new LivyInteractiveClient(baseUri, "username", "password");
+			client = new LivyInteractiveClient(baseUri, "admin", "S@nFrancisc0");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -61,10 +61,13 @@ public class InteractiveSample2 {
 	}	
 	
 	public void run() {
-		InteractiveSessionConf sc = new InteractiveSessionConf(SessionConf.KIND_SPARK);
-//		String[] path = new String[1];
-//		path[0] = "wasb://<blob-container-name>@<accountname>.blob.core.windows.net/jars/your.jar";
-//		sc.setJars(path);
+		InteractiveSessionConf sc = new InteractiveSessionConf(InteractiveSessionConf.KIND_SPARK);
+		String[] path = new String[2];
+		path[0] = "wasb://kojish@hdi35.blob.core.windows.net/tmp/spark-csv_2.10-1.4.0.jar";
+		path[1] = "wasb://kojish@hdi35.blob.core.windows.net/tmp/commons-csv-1.1.jar";
+		sc.setJars(path);
+
+		sc.setAppName("SampleLivyClientApp");
 		
 		// Set session listener
 		try {

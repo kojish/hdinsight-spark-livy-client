@@ -17,13 +17,22 @@
 package kojish.spark.livy.client;
 
 /**
- * A class to set the configuration for the livy session.
- * TODO: Support batch mode.
+ * A class to set the configurations that is commonly used for both batch and interactive mode.
  */
 abstract public class SessionConf {
 	
-	public static String KIND_SPARK = "spark";
+	public static String KIND_SPARK = "spark"; // Obsolute. Use InteractiveSessionConf.KIND_SPARK
 	protected String jars = null;
+	protected String pyFiles = null;		// Not implemented yet
+	protected String files = null;			// Not implemented yet
+	protected String proxyUser  =null;		// Not implemented yet
+	protected String driverMemory = null;	// Not implemented yet
+	protected int driverCores = 0;			// Not implemented yet
+	protected String executorMemory = null;	// Not implemented yet
+	protected int executorCores = 0;		// Not implemented yet
+	protected int numExecutors = 0;			// Not implemented yet
+	protected String archives = null;		// Not implemented yet
+	protected String appName = null;
 
 	/**
 	 * Set file path of jars to be placed on the java classpath
@@ -41,6 +50,14 @@ abstract public class SessionConf {
 			if(cnt < path.length-1) buf.append("\",");
 		}
 		jars = buf.toString();
+	}
+
+	/**
+	 * Set a name for your application
+	 * @param Name of the application
+	 */
+	public void setAppName(String name) {
+		appName = name;
 	}
 
 	/**

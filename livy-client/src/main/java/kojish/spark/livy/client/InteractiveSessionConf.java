@@ -24,6 +24,8 @@ package kojish.spark.livy.client;
 public class InteractiveSessionConf extends SessionConf {
 	
 	public static String KIND_SPARK = "spark";
+	public static String KIND_PYSPARK = "pyspark";
+	public static String KIND_SPARKR = "sparkr";
 	private String kind = KIND_SPARK;
 	private StringBuffer conf = new StringBuffer();
 	
@@ -49,6 +51,9 @@ public class InteractiveSessionConf extends SessionConf {
 			conf.append(", \"jars\" : [");
 			conf.append(jars);
 			conf.append("\"]");
+		}
+		if(appName != null && appName.length() > 0) {
+			conf.append(", \"name\" : " + "\"" + appName + "\"");
 		}
 		conf.append("}");
 		
