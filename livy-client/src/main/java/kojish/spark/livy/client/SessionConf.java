@@ -21,7 +21,6 @@ package kojish.spark.livy.client;
  */
 abstract public class SessionConf {
 	
-	public static String KIND_SPARK = "spark"; // Obsolute. Use InteractiveSessionConf.KIND_SPARK
 	protected String jars = null;
 	protected String pyFiles = null;		// Not implemented yet
 	protected String files = null;			// Not implemented yet
