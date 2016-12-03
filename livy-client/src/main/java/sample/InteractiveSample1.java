@@ -61,7 +61,7 @@ public class InteractiveSample1 {
 	}	
 	
 	public void run() {
-		InteractiveSessionConf sc = new InteractiveSessionConf(SessionConf.KIND_SPARK);
+		InteractiveSessionConf sc = new InteractiveSessionConf(SessionKind.SPARK);
 //		String[] path = new String[1];
 //		path[0] = "wasb://<blob-container-name>@<accountname>.blob.core.windows.net/jars/your.jar";
 //		sc.setJars(path);

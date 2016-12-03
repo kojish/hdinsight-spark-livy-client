@@ -17,50 +17,36 @@
 package kojish.spark.livy.client;
 
 /**
- * Represents a session data for an interactive mode.
+ * The enumeration types for session kind.
  */
-public class InteractiveSession extends Session {
-
-	private String proxyUser = null;
-	private SessionKind kind = SessionKind.SPARK;
-
-	/**
-	 * Creates an interactive session object.
-	 * @param id session id
-	 */
-	public InteractiveSession(int id) {
-		super(id);
-	}
-
-	/**
-	 * Sets a proxy user name.
-	 * @param user proxy user
-	 */
-	public void setProxyUser(String user) {
-		proxyUser = user;
-	}
-
-	/**
-	 * Obtains the proxy user
-	 * @return proxy user
-	 */
-	public String getProxyUser() {
-		return proxyUser;
-	}
-
-	/**
-	 * Sets a kind
-	 * @param kind Session kind
-	 */
-	public void setKind(SessionKind skind) {
+public enum SessionKind {
+	// Possible values are the following.
+	SPARK("spark"),
+	PYSPARK("pyspark"),
+	SPARKR("sparkr");
+	
+	private String kind;
+	
+	private SessionKind(String skind) {
 		kind = skind;
 	}
 
-	/**
-	 * Gets the session kind
-	 * @return Session kind
-	 */
-	public SessionKind getKind() {
+	public String toString() {
 		return kind;
+	}
+
+	/**
+	 * This class finds enum value that is equivalent to a given string.
+	 *	@param kind Session kind.
+	 *	@return Enum value
+	 */
+	public static SessionKind getEnum(String str) {
+		SessionKind[] array = SessionKind.values();
+		for(SessionKind enumStr : array) {
+			if(str.equals(enumStr.kind.toString())) {
+				return enumStr;
+			}
+		}
+		return null;
 	}
 }

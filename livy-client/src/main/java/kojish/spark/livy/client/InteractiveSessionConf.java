@@ -23,19 +23,16 @@ package kojish.spark.livy.client;
  */
 public class InteractiveSessionConf extends SessionConf {
 	
-	public static String KIND_SPARK = "spark";
-	public static String KIND_PYSPARK = "pyspark";
-	public static String KIND_SPARKR = "sparkr";
-	private String kind = KIND_SPARK;
+	private SessionKind skind = SessionKind.SPARK;
 	private StringBuffer conf = new StringBuffer();
 	
 	/**
 	 * Creates a session configuration for interactive mode. 
 	 * @param ssnKind The session kind
 	 */	
-	public InteractiveSessionConf(String ssnKind) {
+	public InteractiveSessionConf(SessionKind ssnKind) {
 		if(ssnKind == null) return;
-		kind = ssnKind;
+		skind = ssnKind;
 	}
 
 	/**
@@ -45,7 +42,7 @@ public class InteractiveSessionConf extends SessionConf {
 	@Override
 	public String getConf() {
 		conf.append("{\"kind\" : \"");
-		conf.append(kind);
+		conf.append(skind.toString());
 		conf.append("\"");
 		if(jars != null && jars.length() > 0) {
 			conf.append(", \"jars\" : [");

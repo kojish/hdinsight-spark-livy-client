@@ -96,9 +96,11 @@ public class LivyInteractiveClient {
 		String data = conf.getConf();
         DataOutputStream os = null;
         BufferedReader br = null;
+
 System.out.println("#######");
 System.out.println(data);
 System.out.println("#######");
+
         HttpURLConnection con = (HttpURLConnection)new URL(baseUri +  "/sessions").openConnection();  
         Authenticator.setDefault(auth);
         con.setRequestMethod("POST");
@@ -222,7 +224,12 @@ System.out.println("#######");
     	if(jsonObj.get("appInfo") != null) session.setAppInfo(jsonObj.get("appInfo").toString());
     	if(jsonObj.get("log") != null) session.setLog(jsonObj.get("log").toString());
     	if(jsonObj.get("proxyUser") != null) session.setProxyUser(jsonObj.get("proxyUser").toString());
-    	if(jsonObj.get("kind") != null) session.setKind(jsonObj.get("kind").toString());
+    	if(jsonObj.get("kind") != null) {
+			SessionKind tmp = SessionKind.getEnum(jsonObj.get("kind").toString());
+			System.out.println("$$$$$$$$$$$$$ " + tmp.toString());
+			session.setKind(tmp);
+			//session.setKind(SessionKind.getEnum(jsonObj.get("ind").toString()));
+		}
     	
 		return session;
 	}

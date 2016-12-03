@@ -32,7 +32,7 @@ abstract public class SessionConf {
 	protected int executorCores = 0;		// Not implemented yet
 	protected int numExecutors = 0;			// Not implemented yet
 	protected String archives = null;		// Not implemented yet
-	protected String appName = null;
+	protected String appName = null;		// Not implemented yet
 
 	/**
 	 * Set file path of jars to be placed on the java classpath
