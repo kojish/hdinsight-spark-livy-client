@@ -26,10 +26,10 @@ public class BatchSample {
 	private final String AZUREHDINSIGHT_LIVY_URI = ".azurehdinsight.net/livy";
 	private String endpoint = "your-endpoint-name";
 	
-	public BatchSample() {
+	public BatchSample(String username, String password, String endpoint) {
 		String baseUri = "https://" + endpoint + AZUREHDINSIGHT_LIVY_URI;
 		try {
-			client = new LivyBatchClient(baseUri, "username", "password");
+			client = new LivyBatchClient(baseUri, username, password);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}

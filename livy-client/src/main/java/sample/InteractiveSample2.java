@@ -27,12 +27,12 @@ public class InteractiveSample2 {
 	private int session_status = Session.STARTING;
 	private LivyInteractiveClient client = null;
 	private final String AZUREHDINSIGHT_LIVY_URI = ".azurehdinsight.net/livy";
-	private String endpoint = "your-endpoint-name";
+	//private String endpoint = "your-endpoint-name";
 	
-	public InteractiveSample2() {
+	public InteractiveSample2(String username, String password, String endpoint) {
 		String baseUri = "https://" + endpoint + AZUREHDINSIGHT_LIVY_URI;
 		try {
-			client = new LivyInteractiveClient(baseUri, "username", "password");
+			client = new LivyInteractiveClient(baseUri, username, password);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
