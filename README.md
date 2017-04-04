@@ -27,7 +27,7 @@ The sample codes are included in the src/main/java/sample directory. The sample 
 ### Quick Start
 Here is how to run the sample application, assuming you already have installed Java 7+ and Maven 3.x in your environment.
 ```
-1. First of all, you need to set an username, password, and endpoint to get an access to your 
+1. First of all, you need to set a username, password, and endpoint to get an access to your 
    hdinsight cluster. Open InteractiveSample2.java that is in src/main/java/sample directory, 
    and set username, password, and endpoint name to LivyInteractiveClient() class.
 2. Change the directory to hdinsight-spark-livy-client/livy-client. You can find pom.xml, and 
