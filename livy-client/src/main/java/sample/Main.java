@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package sample;
+import java.io.PrintStream;
+import java.util.HashMap;
 
 public class Main {
 
@@ -34,9 +36,71 @@ public class Main {
 	// | 62|Geddy|
 	// +---+-----+
 	// 
+
 	public static void main(String args[]) throws Exception {
-		InteractiveSample2 client = new InteractiveSample2();
-		//BatchSample client = new BatchSample();
-		client.run();
-   }
+    
+        HashMap<String, String> opts = Main.getOpt(args);
+         
+        if ( opts.isEmpty() || opts.size() != 4) {
+            System.err.println("The number of parameter is wrong. Please see the below.");
+            printUsage(System.out);
+            System.exit(1);
+        }    
+        else if (opts.get("mode").equals("interactive")) {
+		    InteractiveSample2 client = new InteractiveSample2(opts.get("username"), opts.get("password"), opts.get("endpoint"));
+		    client.run();
+        }    
+        else if (opts.get("mode").equals("batch")) {
+		    BatchSample client = new BatchSample(opts.get("username"), opts.get("password"), opts.get("endpoint"));
+		    client.run();
+        }
+        else if (opts.containsKey("mode") {
+            System.err.println("There is no mode you select. Please see the below.");
+            printUsage(System.out);
+            System.exit(1);
+        }
+        else {
+            System.err.println("Any parameter is wrong. Please see the below.");
+            printUsage(System.out);
+            System.exit(1);
+        }
+    }
+    
+    public static HashMap<String, String> getOpt(String args[]) {
+
+        HashMap<String, String> opts = new HashMap<String, String>();
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].startsWith("-u")) {
+                opts.put("username", args[i + 1]);
+            }
+            if (args[i].startsWith("-p")) {
+                opts.put("password", args[i + 1]);
+            }
+            if (args[i].startsWith("-e")) {
+                opts.put("endpoint", args[i + 1]);
+            }
+            if (args[i].startsWith("-m")) {
+                opts.put("mode", args[i + 1]);
+            }
+            if (args[i].startsWith("-h")) {
+                printUsage(System.out);
+                System.exit(0);
+            }
+        }
+
+        return opts;
+
+    }
+    
+    public static void printUsage(PrintStream s) {
+        s.println("Usage: \"java -cp \"path-to-json-simple-jar\"/json-simple-1.1.1.jar:\"path-to-target-directory\"/livy-client-0.0.1-SNAPSHOT.jar sample/Main [options]");
+        s.println("Options:");
+        s.println("\t-u                Specifies the username to log in HDInsight cluster.");
+        s.println("\t-p                Specifies the password to log in HDInsight cluster.");
+        s.println("\t-e                Specifies the endpoint of HDInsight cluster.");
+        s.println("\t-m                Selects either \"interactive\" or \"batch\" for the execution mode.");
+        s.println("\t-h                Prints this message and quit.");
+    }
+
 }
