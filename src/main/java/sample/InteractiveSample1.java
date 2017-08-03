@@ -20,7 +20,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import ms.csu.livy.client.*;
+import delsh.livy.*;
 
 public class InteractiveSample1 {
 

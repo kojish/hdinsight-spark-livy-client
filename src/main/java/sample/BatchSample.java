@@ -18,7 +18,7 @@ package sample;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import ms.csu.livy.client.*;
+import delsh.livy.*;
 
 public class BatchSample {
 
