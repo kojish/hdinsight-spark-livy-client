@@ -9,23 +9,17 @@ The client supports to send a batch job and create an interactive session with S
 
 ## Build Prerequisites
 You will need to download and install the following to build the code:
-* JDK 1.7 or later
+* JDK 1.8 or later
 * Maven 3.x
 
 ### Dependency
-The client code uses json-simple to parse the result from livy. The following needs to be included in your pom.xml in your maven project:
-```xml
-    <dependency>
-    	<groupId>com.googlecode.json-simple</groupId>
-    	<artifactId>json-simple</artifactId>
-    	<version>1.1.1</version>
-    </dependency>
-```
+TBD.
+
 ## Sample
 The sample codes are included in the src/main/java/sample directory. The sample shows you how to use the client for both batch and interactive.
 
 ### Quick Start
-Here is how to run the sample application, assuming you already have installed Java 7+ and Maven 3.x in your environment.
+Here is how to run the sample application, assuming you already have installed Java 8+ and Maven 3.x in your environment.
 ```
 1. First of all, you need to set a username, password, and endpoint to get an access to your 
    hdinsight cluster. Open InteractiveSample2.java that is in src/main/java/sample directory, 
