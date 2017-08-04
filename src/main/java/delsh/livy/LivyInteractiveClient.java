@@ -87,19 +87,15 @@ public class LivyInteractiveClient {
 	
 	/**
 	 * Creates a new interactive session
-	 * @param conf SparkConf object
+	 * @param req InteractiveJobParameters object
 	 * @return Session object that contains the session id returned from livy server
 	 * @throws IOException
 	 * @throws LivyException
 	 */
-	public Session createSession(InteractiveSessionConf conf) throws IOException, LivyException {
-		String data = conf.getConf();
+	public Session createSession(InteractiveJobParameters req) throws IOException, LivyException {
+		String data = JsonConverter.toJson(req);
         DataOutputStream os = null;
         BufferedReader br = null;
-
-System.out.println("#######");
-System.out.println(data);
-System.out.println("#######");
 
         HttpURLConnection con = (HttpURLConnection)new URL(baseUri +  "/sessions").openConnection();  
         Authenticator.setDefault(auth);
@@ -135,15 +131,15 @@ System.out.println("#######");
 	
 	/**
 	 * Creates a new interactive session with a listener for receiving a session status.
-	 * @param conf SparkConf object
+	 * @param conf InteractiveJobParameters object
 	 * @param interval Interval time expressed in milliseconds for monitoring the status
 	 * @param listener A listener to receive the status
 	 * @return Session object that contains the session id returned from livy server
 	 * @throws IOException
 	 * @throws LivyException
 	 */
-	public Session createSession(InteractiveSessionConf conf, final int interval, final SessionEventListener listener) throws IOException, LivyException {
-		createSession(conf);
+	public Session createSession(InteractiveJobParameters req, final int interval, final SessionEventListener listener) throws IOException, LivyException {
+		createSession(req);
 	
 		sessionThd = Executors.newSingleThreadExecutor();
 		sessionThd.execute(new Runnable() {

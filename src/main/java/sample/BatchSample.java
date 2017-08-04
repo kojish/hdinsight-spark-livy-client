@@ -29,21 +29,19 @@ public class BatchSample {
 	public BatchSample() {
 		String baseUri = "https://" + endpoint + AZUREHDINSIGHT_LIVY_URI;
 		try {
-			client = new LivyBatchClient(baseUri, "username", "password");
+			client = new LivyBatchClient(baseUri, "admin", "password");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void run() {
-		BatchSessionConf sc = new BatchSessionConf("wasb:///jars/sample.jar", "SparkSqlSample");
-//		String[] path = new String[1];
-//		path[0] = "wasb://<blob-container-name>@<accountname>.blob.core.windows.net/jars/your.jar";
-//		sc.setJars(path);
+
+		BatchJobParameters param = new BatchJobParameters("wasb://account-name@container.blob.core.windows.net/tmp/scala.jar", "ClassName");
 	
 		try {
 			//System.out.println(client.getActiveSessions());
-			client.createJob(sc);
+			client.createJob(param);
 			int status = Session.NOT_STARTED;
 			while(true) {
 				status = client.getSession().getState();
@@ -62,6 +60,9 @@ public class BatchSample {
 		    		System.out.println("Status: ERROR");
 		    		break;
 		    	}
+				else if(status == Session.STARTING) {
+					System.out.println("Status: STARTING");
+				}
 		    	else {
 		    		System.out.println("Status: None");
 		    		break;

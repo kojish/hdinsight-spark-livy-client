@@ -32,7 +32,7 @@ public class InteractiveSample2 {
 	public InteractiveSample2() {
 		String baseUri = "https://" + endpoint + AZUREHDINSIGHT_LIVY_URI;
 		try {
-			client = new LivyInteractiveClient(baseUri, "username", "password");
+			client = new LivyInteractiveClient(baseUri, "admin", "password");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -61,14 +61,11 @@ public class InteractiveSample2 {
 	}	
 	
 	public void run() {
-		InteractiveSessionConf sc = new InteractiveSessionConf(SessionKind.SPARK);
-//		String[] path = new String[1];
-//		path[0] = "wasb://<blob-container-name>@<accountname>.blob.core.windows.net/jars/your.jar";
-//		sc.setJars(path);
+		InteractiveJobParameters param = new InteractiveJobParameters(SessionKind.SPARK);
 		
 		// Set session listener
 		try {
-			client.createSession(sc);
+			client.createSession(param);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (LivyException e) {

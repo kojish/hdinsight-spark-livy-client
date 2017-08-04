@@ -61,14 +61,11 @@ public class InteractiveSample1 {
 	}	
 	
 	public void run() {
-		InteractiveSessionConf sc = new InteractiveSessionConf(SessionKind.SPARK);
-//		String[] path = new String[1];
-//		path[0] = "wasb://<blob-container-name>@<accountname>.blob.core.windows.net/jars/your.jar";
-//		sc.setJars(path);
+		InteractiveJobParameters param = new InteractiveJobParameters(SessionKind.SPARK);
 		
 		// Set session listener
 		try {
-			client.createSession(sc, 1000, new SessionEventListener() {
+			client.createSession(param, 1000, new SessionEventListener() {
 				@Override
 				public boolean updateStatus(Session event) {
 //					System.out.println("Session Updated: " + event.getAppId());

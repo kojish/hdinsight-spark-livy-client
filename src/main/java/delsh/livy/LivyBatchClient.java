@@ -77,16 +77,17 @@ public class LivyBatchClient {
 	
 		return buf.toString();
 	}
-	
+
 	/**
 	 * Creates a new batch job
-	 * @param conf SparkConf object
-	 * @return Session object that contains the session id returned from livy server
-	 * @throws IOException
-	 * @throws LivyException
-	 */
-	public Session createJob(BatchSessionConf conf) throws IOException, LivyException {
-		String data = conf.getConf();
+ 	 * @param req BatchJobParameters object
+ 	 * @return Session object that contains the session id returned from livy server
+ 	 * @throws IOException
+ 	 * @throws LivyException
+ 	 */
+	public Session createJob(BatchJobParameters req) throws IOException, LivyException {
+
+		String data = JsonConverter.toJson(req);
         DataOutputStream os = null;
         BufferedReader br = null;
 		int status = Session.RUNNING;
@@ -117,9 +118,12 @@ public class LivyBatchClient {
         	JSONObject jsonObj = (JSONObject) JSONValue.parse(buf);
         	session =  new BatchSession(Integer.valueOf(jsonObj.get("id").toString()));
         	String state = jsonObj.get("state").toString();
-        	if(state.equals("running") == true) status = Session.RUNNING;
+        	
+			if(state.equals("running") == true) status = Session.RUNNING;
         	else if(state.equals("error") == true) status = Session.ERROR;
         	else if(state.equals("success") == true) status = Session.SUCCESS;
+        	else if(state.equals("starting") == true) status = Session.STARTING;
+        	else if(state.equals("idle") == true) status = Session.IDLE;
         	else status = Session.ERROR;
         	session.setState(status);
         } finally {
@@ -129,7 +133,7 @@ public class LivyBatchClient {
 
 		return session;
 	}
-	
+
 	/**
 	 * Retrieves the current session information
 	 * @return Session object
@@ -144,7 +148,6 @@ public class LivyBatchClient {
 	 * @throws IOException
 	 */
 	public BatchSession getSession() throws IOException {
-		BufferedReader br = null;
 		int state = Session.STARTING;
 		
 		if(session.getState() == Session.DEAD) return session;
@@ -156,18 +159,15 @@ public class LivyBatchClient {
 		          
 	    StringBuilder sb = new StringBuilder();
 	    String line = null;
-	    try {
-	    	br = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
+	    try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"))) {
 	    	while ((line = br.readLine()) != null) {
 	    		sb.append(line);
 	    		sb.append("\r\n");
 	    	}
 	    } catch(FileNotFoundException ex) {
 	    	throw new IOException(ex);
-	    } finally {
-	    	if(br != null) br.close();
 	    }
-	    	
+
 	    String buf = sb.toString();
 	    JSONObject jsonObj = (JSONObject) JSONValue.parse(buf);	
 	    String st = jsonObj.get("state").toString();
@@ -175,6 +175,8 @@ public class LivyBatchClient {
     		if(st.equals("running") == true) state = Session.RUNNING;
     		else if(st.equals("error") == true) state = Session.ERROR;
     		else if(st.equals("success") == true) state = Session.SUCCESS;
+    		else if(st.equals("starting") == true) state = Session.STARTING;
+    		else if(st.equals("idle") == true) state = Session.IDLE;
     		else state = Session.ERROR;
     		session.setState(state);
     	}else{

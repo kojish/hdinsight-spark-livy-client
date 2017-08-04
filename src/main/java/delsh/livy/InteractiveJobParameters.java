@@ -19,12 +19,12 @@ package delsh.livy;
 /**
  * POJO class reqresenting a request for a new interactive job.
  */
-public class InteractiveJobRequest {
+public class InteractiveJobParameters {
 
+	// Required 
+	public String kind;
+	// Optional
 	public String proxyUser;
-	public String file;
-	public String[] args;
-	public String className;
 	public String[] jars;
 	public String[] pyFiles;
 	public String[] files;
@@ -34,6 +34,14 @@ public class InteractiveJobRequest {
 	public int executorCores;
 	public int numExecutors;
 	public String[] archives;
+
+	/**
+	 * Constructor
+	 * @param sessionKind 
+	 */
+	public InteractiveJobParameters(SessionKind sessionKind) {
+		kind = sessionKind.toString();
+	}
 
 	@Override
 	public String toString() {

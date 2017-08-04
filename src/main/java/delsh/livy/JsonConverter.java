@@ -19,6 +19,7 @@ package delsh.livy;
 import java.io.IOException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * Convert json string to Java object and vise versa.
@@ -45,6 +46,7 @@ public class JsonConverter {
 	 */
 	public static String toJson(Object obj) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
 		String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
 		return json;
 	}

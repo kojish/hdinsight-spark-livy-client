@@ -19,12 +19,14 @@ package delsh.livy;
 /**
  * POJO class reqresenting a request for a new batch job.
  */
-public class BatchJobRequest {
+public class BatchJobParameters {
 
-	public String proxyUser;
+	// Required parameters
 	public String file;
-	public String[] args;
 	public String className;
+	// Optional parameters
+	public String[] args;
+	public String proxyUser;
 	public String[] jars;
 	public String[] pyFiles;
 	public String[] files;
@@ -34,6 +36,15 @@ public class BatchJobRequest {
 	public int executorCores;
 	public int numExecutors;
 	public String[] archives;
+
+	/**
+	 *  @param pathToJar
+	 *  @param cls class name
+	 */
+	public BatchJobParameters(String pathToJar, String cls) {
+		file = pathToJar;
+		className = cls;
+	}
 
 	@Override
 	public String toString() {
