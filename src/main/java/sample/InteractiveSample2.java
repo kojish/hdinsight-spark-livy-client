@@ -32,7 +32,7 @@ public class InteractiveSample2 {
 	public InteractiveSample2() {
 		String baseUri = "https://" + endpoint + AZUREHDINSIGHT_LIVY_URI;
 		try {
-			client = new LivyInteractiveClient(baseUri, "admin", "password");
+			client = new LivyInteractiveClient(baseUri, "admin", "passw0rd");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}

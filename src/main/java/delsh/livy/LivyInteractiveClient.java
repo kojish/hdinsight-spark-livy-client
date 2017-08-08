@@ -28,6 +28,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.List;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -119,8 +124,10 @@ public class LivyInteractiveClient {
         		sb.append("\r\n");
         	}
         	String buf = sb.toString();
-        	JSONObject jsonObj = (JSONObject) JSONValue.parse(buf);
-        	session =  new InteractiveSession(Integer.valueOf(jsonObj.get("id").toString()));
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode root = mapper.readTree(buf);
+        	session =  new InteractiveSession(Integer.valueOf(root.get("id").asText()));
+System.out.println("ID: " + session.getId());
         } finally {
         	if(br != null) br.close();
         	if(os != null) os.close();
@@ -204,8 +211,9 @@ public class LivyInteractiveClient {
 	    }
 
 	    String buf = sb.toString();
-	    JSONObject jsonObj = (JSONObject) JSONValue.parse(buf);	
-    	String state = jsonObj.get("state").toString();
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode root = mapper.readTree(buf);
+    	String state = root.get("state").asText();
     	if(state != null) {
     		if(state.equals("starting") == true) status = Session.STARTING;
     		else if(state.equals("idle") == true) status = Session.IDLE;
@@ -216,15 +224,14 @@ public class LivyInteractiveClient {
     	}else{
     		session.setState(Session.ERROR);
     	}
-    	if(jsonObj.get("appId") != null) session.setAppId(jsonObj.get("appId").toString());
-    	if(jsonObj.get("appInfo") != null) session.setAppInfo(jsonObj.get("appInfo").toString());
-    	if(jsonObj.get("log") != null) session.setLog(jsonObj.get("log").toString());
-    	if(jsonObj.get("proxyUser") != null) session.setProxyUser(jsonObj.get("proxyUser").toString());
-    	if(jsonObj.get("kind") != null) {
-			SessionKind tmp = SessionKind.getEnum(jsonObj.get("kind").toString());
-			System.out.println("$$$$$$$$$$$$$ " + tmp.toString());
+    	if(root.get("appId") != null) session.setAppId(root.get("appId").asText());
+    	if(root.get("appInfo") != null) session.setAppInfo(root.get("appInfo").asText());
+    	if(root.get("log") != null) session.setLog(root.get("log").asText());
+    	if(root.get("proxyUser") != null) session.setProxyUser(root.get("proxyUser").asText());
+    	if(root.get("kind") != null) {
+			SessionKind tmp = SessionKind.getEnum(root.get("kind").asText());
 			session.setKind(tmp);
-			//session.setKind(SessionKind.getEnum(jsonObj.get("ind").toString()));
+			//session.setKind(SessionKind.getEnum(root.get("ind").asText()));
 		}
     	
 		return session;
@@ -283,58 +290,63 @@ public class LivyInteractiveClient {
 		stmtThd = Executors.newSingleThreadExecutor();
 		stmtThd.execute(new Runnable() {
 			@Override
-            public void run(){
+			public void run(){
+
             	int current = array.size();
+
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode root = null;
+
                 while(true) {
-              	  String buf;
-              	  try {
-              		  buf = getStatementResult();
+					String buf;
+					try {
+						buf = getStatementResult();
+					  	System.out.print("BUF: " + buf);
+					  	root = mapper.readTree(buf);
+						int total = Integer.valueOf(root.get("total_statements").asText());
+						StatementResults ret = JsonConverter.toObject(StatementResults.class, buf);
+						System.out.println("RET: " + ret.total_statements);
+						List<Statements> stt = ret.statements;
+						stt.forEach(s -> {
+							if(s.id != current) return;
+					  		if(s.output == null) return;
+							if(!s.state.equals(StatementResult.STATE_AVAILABLE)) return;
+
+							StatementResult sr;
+							if(s.output.status.equals("error")) {
+/*								System.out.println("ID: " + s.id );
+								System.out.println("STATE: " + s.state);
+								System.out.println("STATUS: " + s.output.status);
+								System.out.println("EXECUTION_COUNT :" + s.output.execution_count);
+*/
+								sr = new StatementResult(s.id, s.state, s.output.execution_count, s.output.status, "", statement);
+							} else {
+/*								System.out.println("ID: " + s.id );
+								System.out.println("STATE: " + s.state);
+								System.out.println("STATUS: " + s.output.status);
+								System.out.println("EXECUTION_COUNT :" + s.output.execution_count);
+								System.out.println("Text: " + s.output.data.text);
+*/
+								sr = new StatementResult(s.id, s.state, s.output.execution_count, s.output.status, s.output.data.text, statement);
+							}
+							array.add(sr);
+							listener.update(sr);
+						});
+
+              	  		if(array.size() == current + 1) {
+              		  		break;
+              	  		}
               	  } catch (IOException e1) {
               		  e1.printStackTrace();
               		  return;
               	  }
-              	  JSONObject outObj = null;
-              	  JSONObject jsonObj = (JSONObject)JSONValue.parse(buf);
-              	  int total = Integer.valueOf(jsonObj.get("total_statements").toString());
-              	  JSONArray jarray = (JSONArray) jsonObj.get("statements");
-              	  for(int cnt=0; cnt<total; cnt++) {
-              		  JSONObject jo = (JSONObject)jarray.get(cnt);
-              		  if(Integer.parseInt(jo.get("id").toString()) != current) continue;
-              		  if(jo.get("output") == null) continue;
-              		  if(!jo.get("state").equals(StatementResult.STATE_AVAILABLE)) continue;
-              			 
-              		  StatementResult sr;
-              		  outObj = (JSONObject)JSONValue.parse(jo.get("output").toString());
-              		  if(outObj.get("status").equals("error")) {
-              			  sr = new StatementResult(Integer.valueOf(jo.get("id").toString()), 
-              					  				   jo.get("state").toString(),
-              					  				   Integer.valueOf(outObj.get("execution_count").toString()),
-              					  				   outObj.get("status").toString(),
-              					  				   outObj.get("evalue").toString(),
-              					  				   statement);
-              		  }else{
-              			  JSONObject res = (JSONObject)JSONValue.parse(outObj.get("data").toString());
-              			  sr = new StatementResult(Integer.valueOf(jo.get("id").toString()),
-              					                   jo.get("state").toString(),
-              					                   Integer.valueOf(outObj.get("execution_count").toString()),
-              					                   outObj.get("status").toString(),
-              					                   res.get("text/plain").toString(),
-              					                   statement);
-              		  }
-           			  array.add(sr);
-              		  listener.update(sr);
-              		  break;
-              	  }
-          	   
-              	  if(array.size() == current + 1) {
-              		  break;
-              	  }
-              	  
+
               	  try {
               		  Thread.sleep(interval);
               	  } catch (InterruptedException e) {
               		  e.printStackTrace();
               	  }
+
                 }
            }
         });
@@ -395,4 +407,29 @@ public class LivyInteractiveClient {
 	    	if(stmtThd != null && stmtThd.isShutdown() == false)	stmtThd.shutdown();
 	    }
 	}
+}
+
+class StatementResults {
+	public int total_statements;
+	public List<Statements> statements;
+}
+
+class Statements {
+	public int id;
+	public String state;
+	public Output output;
+}
+
+class Output {
+	public String status;
+	public int execution_count;
+	public String ename;
+	public String evalue;
+	public String[] traceback;
+	public Data data;
+}
+
+class Data {
+	@JsonProperty("text/plain")
+	public String text;
 }

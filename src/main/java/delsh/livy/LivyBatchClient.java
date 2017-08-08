@@ -26,8 +26,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * LivyBatchClient is a class that submits spark job to Livy server with batch mode.
@@ -88,17 +88,17 @@ public class LivyBatchClient {
 	public Session createJob(BatchJobParameters req) throws IOException, LivyException {
 
 		String data = JsonConverter.toJson(req);
-        DataOutputStream os = null;
-        BufferedReader br = null;
+		DataOutputStream os = null;
+		BufferedReader br = null;
 		int status = Session.RUNNING;
 
 		HttpURLConnection con = (HttpURLConnection)new URL(baseUri +  "/batches").openConnection();  
 		Authenticator.setDefault(auth);
-	    con.setRequestMethod("POST");
-	    con.setRequestProperty("Content-Type", "application/json");
-	    con.setRequestProperty("Content-Length", String.valueOf(data.length()));
-	    con.setDoOutput(true);
-        os = new DataOutputStream(con.getOutputStream());
+		con.setRequestMethod("POST");
+		con.setRequestProperty("Content-Type", "application/json");
+		con.setRequestProperty("Content-Length", String.valueOf(data.length()));
+		con.setDoOutput(true);
+		os = new DataOutputStream(con.getOutputStream());
  
         try {
         	os.writeBytes(data);
@@ -115,9 +115,11 @@ public class LivyBatchClient {
         		sb.append("\r\n");
         	}
         	String buf = sb.toString();
-        	JSONObject jsonObj = (JSONObject) JSONValue.parse(buf);
-        	session =  new BatchSession(Integer.valueOf(jsonObj.get("id").toString()));
-        	String state = jsonObj.get("state").toString();
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode root = mapper.readTree(buf);
+
+        	session =  new BatchSession(Integer.valueOf(root.get("id").asText()));
+        	String state = root.get("state").asText();
         	
 			if(state.equals("running") == true) status = Session.RUNNING;
         	else if(state.equals("error") == true) status = Session.ERROR;
@@ -169,8 +171,10 @@ public class LivyBatchClient {
 	    }
 
 	    String buf = sb.toString();
-	    JSONObject jsonObj = (JSONObject) JSONValue.parse(buf);	
-	    String st = jsonObj.get("state").toString();
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode root = mapper.readTree(buf);
+		String st = root.get("state").asText();
+
     	if(st != null) {
     		if(st.equals("running") == true) state = Session.RUNNING;
     		else if(st.equals("error") == true) state = Session.ERROR;
@@ -182,9 +186,9 @@ public class LivyBatchClient {
     	}else{
     		session.setState(Session.ERROR);
     	}
-    	if(jsonObj.get("appId") != null) session.setAppId(jsonObj.get("appId").toString());
-    	if(jsonObj.get("appInfo") != null) session.setAppInfo(jsonObj.get("appInfo").toString());
-    	if(jsonObj.get("log") != null) session.setLog(jsonObj.get("log").toString());
+    	if(root.get("appId") != null) session.setAppId(root.get("appId").asText());
+    	if(root.get("appInfo") != null) session.setAppInfo(root.get("appInfo").asText());
+    	if(root.get("log") != null) session.setLog(root.get("log").asText());
 	
 		return session;
 	}
@@ -219,10 +223,11 @@ public class LivyBatchClient {
 	    }
 
 	    String buf = sb.toString();
-	    JSONObject jsonObj = (JSONObject) JSONValue.parse(buf);	
-	    String from = jsonObj.get("from").toString();
-	    String total = jsonObj.get("total").toString();
-    	String log = jsonObj.get("log").toString();
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode root = mapper.readTree(buf);
+	    String from = root.get("from").asText();
+	    String total = root.get("total").asText();
+    	String log = root.get("log").asText();
 	
 		return buf;
 	}

@@ -33,7 +33,7 @@ public class JsonConverter {
      * @return Java object
      * @throws IOException
      */
-	public static <T> T toObjct(Class<T> cls, String json) throws IOException {
+	public static <T> T toObject(Class<T> cls, String json) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		return (T) mapper.readValue(json, cls);
 	}
