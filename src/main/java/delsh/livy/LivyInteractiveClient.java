@@ -75,6 +75,7 @@ public class LivyInteractiveClient {
 	    Authenticator.setDefault(auth);
 	    con.setRequestMethod("GET");
 	    con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("X-Requested-By", "admin");
 	    
 	    try {
 	    	br = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));  
@@ -107,6 +108,7 @@ public class LivyInteractiveClient {
         con.setRequestMethod("POST");
         con.setRequestProperty("Content-Type", "application/json");
         con.setRequestProperty("Content-Length", String.valueOf(data.length()));
+        con.setRequestProperty("X-Requested-By", "admin"); // Required from HDI3.6 (Spark2.3)
         con.setDoOutput(true);
         	
         os = new DataOutputStream(con.getOutputStream());
@@ -195,6 +197,7 @@ System.out.println("ID: " + session.getId());
 		Authenticator.setDefault(auth);
 		con.setRequestMethod("GET");
 		con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("X-Requested-By", "admin");
 
 	    StringBuilder sb = new StringBuilder();
 	    String line = null;
@@ -254,6 +257,7 @@ System.out.println("ID: " + session.getId());
 	    con.setRequestMethod("POST");
 	    con.setRequestProperty("Content-Type", "application/json");
 	    con.setRequestProperty("Content-Length", String.valueOf(data.length()));
+        con.setRequestProperty("X-Requested-By", "admin");
 	    con.setDoOutput(true);
         os = new DataOutputStream(con.getOutputStream());
         try {
@@ -301,11 +305,11 @@ System.out.println("ID: " + session.getId());
 					String buf;
 					try {
 						buf = getStatementResult();
-					  	System.out.print("BUF: " + buf);
+//					  	System.out.print("BUF: " + buf);
 					  	root = mapper.readTree(buf);
 						int total = Integer.valueOf(root.get("total_statements").asText());
 						StatementResults ret = JsonConverter.toObject(StatementResults.class, buf);
-						System.out.println("RET: " + ret.total_statements);
+//						System.out.println("RET: " + ret.total_statements);
 						List<Statements> stt = ret.statements;
 						stt.forEach(s -> {
 							if(s.id != current) return;
@@ -367,6 +371,7 @@ System.out.println("ID: " + session.getId());
 		Authenticator.setDefault(auth);
 	    con.setRequestMethod("GET");
 	    con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("X-Requested-By", "admin");
 		          
 	    br = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));  
 	    try {
@@ -392,6 +397,7 @@ System.out.println("ID: " + session.getId());
 			Authenticator.setDefault(auth);
 	    	con.setRequestMethod("DELETE");
 	    	con.setRequestProperty("Content-Type", "application/json");
+	    	con.setRequestProperty("X-Requested-By", "admin");
 	    	br = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));  
 	    	String line = null;
 	    	StringBuilder buf = new StringBuilder();
@@ -418,6 +424,10 @@ class Statements {
 	public int id;
 	public String state;
 	public Output output;
+	// Added from HDI 3.6 (Spark 2.2.)
+	public String code; // "spark"
+	// Added from HDI 3.6 (Spark 2.2.)
+	public float progress;
 }
 
 class Output {

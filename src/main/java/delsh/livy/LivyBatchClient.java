@@ -96,7 +96,8 @@ public class LivyBatchClient {
 		Authenticator.setDefault(auth);
 		con.setRequestMethod("POST");
 		con.setRequestProperty("Content-Type", "application/json");
-		con.setRequestProperty("Content-Length", String.valueOf(data.length()));
+		con.setRequestProperty("Content-Type", "application/json");
+		con.setRequestProperty("X-Requested-By", "admin");
 		con.setDoOutput(true);
 		os = new DataOutputStream(con.getOutputStream());
  
@@ -244,6 +245,7 @@ public class LivyBatchClient {
 			Authenticator.setDefault(auth);
 	    	con.setRequestMethod("DELETE");
 	    	con.setRequestProperty("Content-Type", "application/json");
+	    	con.setRequestProperty("X-Requested-By", "admin");
 	    	br = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));  
 	    	String line = null;
 	    	StringBuilder buf = new StringBuilder();

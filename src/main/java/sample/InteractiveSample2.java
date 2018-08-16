@@ -32,7 +32,7 @@ public class InteractiveSample2 {
 	public InteractiveSample2() {
 		String baseUri = "https://" + endpoint + AZUREHDINSIGHT_LIVY_URI;
 		try {
-			client = new LivyInteractiveClient(baseUri, "admin", "passw0rd");
+			client = new LivyInteractiveClient(baseUri, "admin", "password");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -115,7 +115,7 @@ public class InteractiveSample2 {
 				client.submitStatement(statement, 1000, new StatementResultListener() {
 					@Override
 					public void update(StatementResult result) {
-						System.out.println("Update Received. " + result.getOutput());
+						System.out.println("Update Received.\n" + result.getOutput());
 						System.out.println("Ready for your input ....");
 						System.out.print(">");
 					}

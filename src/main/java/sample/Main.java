@@ -23,7 +23,7 @@ public class Main {
 	// Once the session creation is completed, it is ready for taking your input from stdin.
 	//
 	// For example, you can put the following:
-	// >val sqlContext = new org.apache.spark.sql.SQLContext(sc); val pf = sqlContext.read.parquet("wasb:///example/data/people.parquet"); pf.registerTempTable("pftbl"); sqlContext.sql("SELECT * FROM pftbl").show()
+	// >val df = spark.read.parquet("wasb:///example/data/people.parquet"); df.show()
 	//
 	// Then, the query result will be returned as below:
 	// +---+-----+
@@ -35,8 +35,8 @@ public class Main {
 	// +---+-----+
 	// 
 	public static void main(String args[]) throws Exception {
-		InteractiveSample2 client = new InteractiveSample2();
-		//BatchSample client = new BatchSample();
+		//InteractiveSample2 client = new InteractiveSample2();
+		BatchSample client = new BatchSample();
 		client.run();
    }
 }

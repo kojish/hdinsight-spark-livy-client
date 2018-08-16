@@ -25,11 +25,13 @@ public class BatchSample {
 	private LivyBatchClient client = null;
 	private final String AZUREHDINSIGHT_LIVY_URI = ".azurehdinsight.net/livy";
 	private String endpoint = "your-endpoint-name";
+	private String pathToJar = "wasb://share@datasetks.blob.core.windows.net/scalasample.jar";
+	private String className = "RDDRelation";
 	
 	public BatchSample() {
 		String baseUri = "https://" + endpoint + AZUREHDINSIGHT_LIVY_URI;
 		try {
-			client = new LivyBatchClient(baseUri, "admin", "passw0rd");
+			client = new LivyBatchClient(baseUri, "admin", "password");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -37,7 +39,7 @@ public class BatchSample {
 
 	public void run() {
 
-		BatchJobParameters param = new BatchJobParameters("wasb://ksspark@spark210.blob.core.windows.net/tmp/scala.jar", "RDDRelation");
+		BatchJobParameters param = new BatchJobParameters(pathToJar, className);
 	
 		try {
 			//System.out.println(client.getActiveSessions());
